@@ -1,7 +1,7 @@
 from ultralytics import YOLO
 # from ultralytics.engine.results import Results
 
-model = YOLO("/home/izack/Investigations/IA/Cv2/Square/best.pt")
+model = YOLO("/home/izack/Investigations/IA/Implementations/YuNet-Yolo/best.pt")
 
 def analize(img):
     results = model(img)
