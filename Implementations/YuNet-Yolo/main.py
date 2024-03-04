@@ -7,18 +7,19 @@ from yunet.yunet import YuNet
 
 info = "Face"
 
+
 def live_face_detector():
     global info
     # face_cascade = cv2.CascadeClassifier(haarcascades + 'haarcascade_frontalface_default.xml')
     model = YuNet(
-            modelPath= "yunet/face_detection_yunet_2023mar.onnx",
-            inputSize= [320, 320],
-            confThreshold= 0.9,
-            nmsThreshold= 0.3,
-            topK= 100,
-            backendId= cv2.dnn.DNN_BACKEND_OPENCV,
-            targetId= cv2.dnn.DNN_TARGET_CPU,
-            )
+        modelPath="yunet/face_detection_yunet_2023mar.onnx",
+        inputSize=[320, 320],
+        confThreshold=0.9,
+        nmsThreshold=0.3,
+        topK=100,
+        backendId=cv2.dnn.DNN_BACKEND_OPENCV,
+        targetId=cv2.dnn.DNN_TARGET_CPU,
+    )
 
     cap = cv2.VideoCapture(0)
     while True:
@@ -27,23 +28,37 @@ def live_face_detector():
             h, w, _ = frame.shape
             model.setInputSize([w, h])
             faces = model.infer(frame)
-            for det in (faces if faces is not None else []):
+            for det in faces if faces is not None else []:
                 bbox = det[0:4].astype(np.int32)
-                roi = frame[bbox[1]:bbox[1]+bbox[3], bbox[0]:bbox[0]+bbox[2]]
-                cv2.imwrite("roi.jpg", roi)
+                roi = frame[bbox[1] : bbox[1] + bbox[3], bbox[0] : bbox[0] + bbox[2]]
+                # cv2.imwrite("roi.jpg", roi)
                 if roi.size > 0:
                     if analize(roi) == 0:
                         info = "Face"
                     else:
                         info = "Spoof"
-                cv2.rectangle(frame, (bbox[0], bbox[1]), (bbox[0]+bbox[2], bbox[1]+bbox[3]), (0,0,255), 2)
+                cv2.rectangle(
+                    frame,
+                    (bbox[0], bbox[1]),
+                    (bbox[0] + bbox[2], bbox[1] + bbox[3]),
+                    (0, 0, 255),
+                    2,
+                )
                 # if analize(frame[bbox[1]:bbox[1]+bbox[3], bbox[0]:bbox[0]+bbox[2]]) == 0:
                 #     info = "Face"
                 # else:
                 #     info = "Spoof"
-                cv2.putText(frame, info, (bbox[0], bbox[1]-10), cv2.FONT_HERSHEY_SIMPLEX, 0.9, (0, 255, 0), 2)
-            cv2.imshow('Video', frame)
-            if cv2.waitKey(1) & 0xFF == ord('q'):
+                cv2.putText(
+                    frame,
+                    info,
+                    (bbox[0], bbox[1] - 10),
+                    cv2.FONT_HERSHEY_SIMPLEX,
+                    0.9,
+                    (0, 255, 0),
+                    2,
+                )
+            cv2.imshow("Video", frame)
+            if cv2.waitKey(1) & 0xFF == ord("q"):
                 break
     # Libera el objeto VideoCapture
     cap.release()
@@ -52,6 +67,7 @@ def live_face_detector():
 
 def main():
     live_face_detector()
+
 
 if __name__ == "__main__":
     main()
