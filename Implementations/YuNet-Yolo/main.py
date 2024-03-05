@@ -1,16 +1,11 @@
-import time
 import cv2
-from cv2.data import haarcascades
 import numpy as np
 from analizer.lize import analize
 from yunet.yunet import YuNet
 
-info = "Face"
-
 
 def live_face_detector():
     global info
-    # face_cascade = cv2.CascadeClassifier(haarcascades + 'haarcascade_frontalface_default.xml')
     model = YuNet(
         modelPath="yunet/face_detection_yunet_2023mar.onnx",
         inputSize=[320, 320],
@@ -31,10 +26,9 @@ def live_face_detector():
             for det in faces if faces is not None else []:
                 bbox = det[0:4].astype(np.int32)
                 roi = frame[bbox[1] : bbox[1] + bbox[3], bbox[0] : bbox[0] + bbox[2]]
-                # cv2.imwrite("roi.jpg", roi)
                 if roi.size > 0:
                     if analize(roi) == 0:
-                        info = "Face"
+                        info = "Live"
                     else:
                         info = "Spoof"
                 cv2.rectangle(
@@ -44,10 +38,6 @@ def live_face_detector():
                     (0, 0, 255),
                     2,
                 )
-                # if analize(frame[bbox[1]:bbox[1]+bbox[3], bbox[0]:bbox[0]+bbox[2]]) == 0:
-                #     info = "Face"
-                # else:
-                #     info = "Spoof"
                 cv2.putText(
                     frame,
                     info,
@@ -60,7 +50,6 @@ def live_face_detector():
             cv2.imshow("Video", frame)
             if cv2.waitKey(1) & 0xFF == ord("q"):
                 break
-    # Libera el objeto VideoCapture
     cap.release()
     cv2.destroyAllWindows()
 
