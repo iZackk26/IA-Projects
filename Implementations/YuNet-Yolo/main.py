@@ -26,6 +26,7 @@ def live_face_detector():
             for det in faces if faces is not None else []:
                 bbox = det[0:4].astype(np.int32)
                 roi = frame[bbox[1] : bbox[1] + bbox[3], bbox[0] : bbox[0] + bbox[2]]
+                cv2.imwrite("roi.jpg", roi)
                 if roi.size > 0:
                     if analize(roi) == 0:
                         info = "Live"
