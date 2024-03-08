@@ -4,8 +4,8 @@ from ultralytics import YOLO
 # Dataset Path
 
 def train(dataset):
-    model = YOLO('yolov8n-cls.pt')
-    model.train(data=dataset, epochs=50, imgsz=12)
+    model = YOLO('yolov8s-cls.pt')
+    model.train(data=dataset, epochs=100, imgsz=244, batch=16, weight_decay=0.0005)
 
 # Test Model
 def val():
