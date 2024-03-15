@@ -23,9 +23,8 @@ def live_face_detector():
             h, w, _ = frame.shape
             model.setInputSize([w, h])
             faces = model.infer(frame)
-            for det in faces if faces is not None else []:
+            for det in faces if faces is not None else []: # No se crashee cuando se sale del frame
                 bbox = det[0:4].astype(np.int32)
-<<<<<<< HEAD
 
                 # Aument the bounding box
                 padding_x = int(0.2 * bbox[2])
@@ -36,9 +35,7 @@ def live_face_detector():
                 y2 = min(bbox[1] + bbox[3] + padding_y, h)
                 roi = frame[y1:y2, x1:x2]
                 #roi = frame[bbox[1] : bbox[1] + bbox[3], bbox[0] : bbox[0] + bbox[2]]
-=======
                 roi = frame[bbox[1] : bbox[1] + bbox[3], bbox[0] : bbox[0] + bbox[2]]
->>>>>>> f0c0dfd6605e774b847df9095f5d597182a890c3
                 cv2.imwrite("roi.jpg", roi)
                 if roi.size > 0:
                     if analize(roi) == 0:
