@@ -31,19 +31,18 @@ class eye_blink_detector:
         ear = (leftEAR + rightEAR) / 2.0
         # check to see if the eye aspect ratio is below the blink
         # threshold, and if so, increment the blink frame counter
-        blink_detected = False
         if ear < cfg.EYE_AR_THRESH:
-            blink_detected = True
+            COUNTER += 1
         # otherwise, the eye aspect ratio is not below the blink
         # threshold
-        # else:
-        # if the eyes were closed for a sufficient number of
-        # then increment the total number of blinks
-        # if COUNTER >= cfg.EYE_AR_CONSEC_FRAMES:
-        #    TOTAL += 1
-        # reset the eye frame counter
-        # COUNTER = 0
-        return blink_detected
+        else:
+            # if the eyes were closed for a sufficient number of
+            # then increment the total number of blinks
+            if COUNTER >= cfg.EYE_AR_CONSEC_FRAMES:
+                TOTAL += 1
+            # reset the eye frame counter
+            COUNTER = 0
+        return COUNTER, TOTAL
 
     def eye_aspect_ratio(self, eye):
         # compute the euclidean distances between the two sets of
