@@ -1,7 +1,7 @@
 from ultralytics import YOLO
 # from ultralytics.engine.results import Results
 
-model = YOLO("best.pt")
+model = YOLO("Models/3DFaceModel.pt")
 
 
 def analize(img):
