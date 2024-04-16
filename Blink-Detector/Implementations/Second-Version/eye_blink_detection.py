@@ -25,7 +25,7 @@ while True:
     im = imutils.resize(im, width=720)
     gray = cv2.cvtColor(im, cv2.COLOR_BGR2GRAY)
     # detectar_rostro
-    rectangles = detector.detector_faces(gray, 0)
+    rectangles = detector.detector_faces(gray)
     boxes_face = f_detector.convert_rectangles2array(rectangles, im)
     if len(boxes_face) != 0:
         # seleccionar el rostro con mas area
