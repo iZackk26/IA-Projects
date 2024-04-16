@@ -72,6 +72,7 @@ def convert_rectangles2array(rectangles, image):
             res = np.expand_dims(new_box, axis=0)
         else:
             res = np.vstack((res, new_box))
+    print(res)
     return res
 
 
