@@ -1,6 +1,8 @@
 import cv2
 from Cam.cam import Camera
 from Yunet.yunet import YuNet
+from Blinker.f_detector import eye_blink_detector
+import numpy as np
 
 info = ""
 
@@ -16,8 +18,13 @@ def main():
         targetId=cv2.dnn.DNN_TARGET_CPU,
     )
     cam = Camera(model, 0, info)
+    eye = eye_blink_detector()
+    faces = []
     for faces, frame in cam.webcam():
+        faces = eye.rectangles(faces)
         print(faces)
+
+
 
 
 if __name__ == "__main__":
