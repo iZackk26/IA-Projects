@@ -4,7 +4,8 @@ from analizer.lize import analize
 from yunet.yunet import YuNet
 
 
-def live_face_detector():
+def live_face_detector(model_selected):
+    model_choosen = model_selected
     global info
     model = YuNet(
         modelPath="yunet/face_detection_yunet_2023mar.onnx",
@@ -40,11 +41,12 @@ def live_face_detector():
                 roi = frame[bbox[1] : bbox[1] + bbox[3], bbox[0] : bbox[0] + bbox[2]]
                 # cv2.imwrite("roi.jpg", roi)
                 if roi.size > 0:
-                    if analize(roi) == 0:
-                        info = "live"
+                    if analize(roi, model_choosen) == 0:
+                        info = "Live"
                     else:
-                        info = "spoof"
-                # yield info
+                        info = "Spoof"
+                yield info
+                info += " -  " + model_choosen
                 cv2.rectangle(frame, (x1, y1), (x2, y2), (255, 255, 0), 2)
                 cv2.putText(
                     frame,
@@ -79,4 +81,4 @@ def live_face_detector():
     cv2.destroyAllWindows()
 
 
-live_face_detector()
+live_face_detector("ImageQuality")
