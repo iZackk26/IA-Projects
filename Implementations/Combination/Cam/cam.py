@@ -13,9 +13,10 @@ class Camera:
             print(ret)
             if frame is not None:
                 h,w,_ = frame.shape
+                gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
                 self.model.setInputSize([w, h])
                 faces = self.model.infer(frame)
-                yield faces, frame
+                yield faces, frame, gray
 
             cv2.imshow(self.info, frame)
             if cv2.waitKey(1) & 0xFF == ord('q'):

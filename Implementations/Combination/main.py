@@ -1,13 +1,16 @@
 import cv2
+import numpy as np
 from Cam.cam import Camera
 from Yunet.yunet import YuNet
 from Blinker.f_detector import eye_blink_detector
-import numpy as np
 
 info = ""
+counter = 0
+total = 0
+
 
 def main():
-    global info
+    global info, counter, total
     model = YuNet(
         modelPath="Yunet/face_detection_yunet_2023mar.onnx",
         inputSize=[320, 320],
@@ -20,9 +23,18 @@ def main():
     cam = Camera(model, 0, info)
     eye = eye_blink_detector()
     faces = []
-    for faces, frame in cam.webcam():
-        faces = eye.rectangles(faces)
-        print(faces)
+    for raw_faces, frame, gray in cam.webcam():
+        processed_faces = []
+        if raw_faces is not None:
+            for face in raw_faces:
+                x, y, w, h = face[:4]  # Tomar las primeras 4 coordenadas que son x, y, w, h
+                x1, y1 = int(x), int(y)  # Coordenada superior izquierda
+                x2, y2 = int(x + w), int(y + h)  # Coordenada inferior derecha
+                processed_faces.append([x1, y1, x2, y2])  # Agregar al resultado procesado
+            boxes_face = eye.convert_rectangles2array(processed_faces, frame)
+            if len(boxes_face) > 0:
+                areas = eye.get_areas(boxes_face)
+                print(areas)
 
 
 
