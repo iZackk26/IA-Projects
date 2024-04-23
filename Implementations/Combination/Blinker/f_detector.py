@@ -9,6 +9,7 @@ class eye_blink_detector:
         self.predict_eyes = dlib.shape_predictor("shape_predictor_68_face_landmarks.dat")
 
     def eye_blinker(self, rect, gray, counter, total):
+        print(type(rect))
         shape = self.predict_eyes(gray, rect)
         shape = face_utils.shape_to_np(shape)
         left_eye = shape[36:42]
@@ -26,7 +27,7 @@ class eye_blink_detector:
             counter = 0
         return counter, total
 
-    def eye_aspect_ratio(eye):
+    def eye_aspect_ratio(self, eye):
         A = dist.euclidean(eye[1], eye[5])
         B = dist.euclidean(eye[2], eye[4])
         C = dist.euclidean(eye[0], eye[3])
@@ -37,10 +38,10 @@ class eye_blink_detector:
         res = np.array([])
         for box in rectangles:
             [x0, y0, x1, y1] = (
-                max(0, box[0]),
-                max(0, box[1]),
-                min(box[2], image.shape[1]),
-                min(box[3], image.shape[0]),
+                max(0, box.left()),
+                max(0, box.top()),
+                min(box.right(), image.shape[1]),
+                min(box.bottom(), image.shape[0]),
             )
             new_box = np.array([x0, y0, x1, y1])
             if res.size == 0:

@@ -1,3 +1,4 @@
+import dlib
 import cv2
 import numpy as np
 from Cam.cam import Camera
@@ -20,7 +21,7 @@ def main():
         backendId=cv2.dnn.DNN_BACKEND_OPENCV,
         targetId=cv2.dnn.DNN_TARGET_CPU,
     )
-    cam = Camera(model, 0, info)
+    cam = Camera(model, 0, info) #
     eye = eye_blink_detector()
     faces = []
     for raw_faces, frame, gray in cam.webcam():
@@ -30,11 +31,14 @@ def main():
                 x, y, w, h = face[:4]  # Tomar las primeras 4 coordenadas que son x, y, w, h
                 x1, y1 = int(x), int(y)  # Coordenada superior izquierda
                 x2, y2 = int(x + w), int(y + h)  # Coordenada inferior derecha
-                processed_faces.append([x1, y1, x2, y2])  # Agregar al resultado procesado
+                processed_face = dlib.rectangle(left=x1, top=y1, right=x2, bottom=y2)
+                processed_faces.append(processed_face)
             boxes_face = eye.convert_rectangles2array(processed_faces, frame)
             if len(boxes_face) > 0:
                 areas = eye.get_areas(boxes_face)
-                print(areas)
+                boxes_face = np.expand_dims(boxes_face[0], axis=0)
+                counter, total = eye.eye_blinker(processed_faces[0], gray, counter, total)
+
 
 
 
