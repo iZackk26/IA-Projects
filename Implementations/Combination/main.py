@@ -8,6 +8,7 @@ from Blinker.f_detector import eye_blink_detector
 info = ""
 counter = 0
 total = 0
+last_detected = "Hola"
 
 
 def main():
@@ -25,6 +26,7 @@ def main():
     eye = eye_blink_detector()
     faces = []
     for raw_faces, frame, gray in cam.webcam():
+        img_post = frame
         processed_faces = []
         if raw_faces is not None:
             for face in raw_faces:
@@ -38,6 +40,12 @@ def main():
                 areas = eye.get_areas(boxes_face)
                 boxes_face = np.expand_dims(boxes_face[0], axis=0)
                 counter, total = eye.eye_blinker(processed_faces[0], gray, counter, total)
+                img_post = eye.bounding_box(frame, boxes_face, [last_detected])
+                if img_post is not None and img_post.size != 0:
+                    cv2.imshow("Blinker", img_post)
+        else:
+            img_post = frame
+
 
 
 

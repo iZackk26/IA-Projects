@@ -10,7 +10,6 @@ class Camera:
         cap = cv2.VideoCapture(self.device_number)
         while True:
             ret, frame = cap.read()
-            print(ret)
             if frame is not None:
                 h,w,_ = frame.shape
                 gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)

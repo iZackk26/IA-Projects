@@ -1,5 +1,6 @@
 import numpy as np
 import dlib
+import cv2
 import config as cfg
 from imutils import face_utils
 from scipy.spatial import distance as dist
@@ -57,3 +58,19 @@ class eye_blink_detector:
             area = (y1 - y0) * (x1 - x0)
             areas.append(area)
         return areas
+    def bounding_box(self, img, box, match_name=[]):
+        for i in np.arange(len(box)):
+            x0, y0, x1, y1 = box[i]
+            img = cv2.rectangle(img, (x0, y0), (x1, y1), (0, 255, 0), 3)
+            if not match_name:
+                continue
+            else:
+                cv2.putText(
+                    img,
+                    match_name[i],
+                    (x0, y0 - 10),
+                    cv2.FONT_HERSHEY_SIMPLEX,
+                    0.9,
+                    (0, 255, 0),
+                    2,
+                )
