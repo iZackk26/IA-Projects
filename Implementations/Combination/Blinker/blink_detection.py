@@ -94,23 +94,31 @@ class EyeDetector:
     # Blink Detection
     def process_images(self):
         processed_faces = []
-        for face in self.raw_faces:
-            x,y,w,h = face[:4]
-            x1, y1 = int(x), int(y)
-            x2, y2 = int(x + w), int(y + h)
-            processed_face = dlib.rectangle(left=x1, top=y1, right=x2, bottom=y2)
-            processed_faces.append(processed_face)
+        if self.raw_faces is not None:
+            for face in self.raw_faces:
+                x,y,w,h = face[:4] # Error
+                print("Coordinates",x,y,w,h)
+                x1, y1 = int(x), int(y)
+                x2, y2 = int(x + w), int(y + h)
+                processed_face = dlib.rectangle(left=x1, top=y1, right=x2, bottom=y2)
+                #print("face",processed_face)
+                processed_faces.append(processed_face)
+        #print("faces:",processed_faces)
         return processed_faces
 
     def detect_blink(self):
         img_post = self.frame
-        boxes_faces = self.convert_rectangles2array(self.process_images(), self.frame)
-        if len(boxes_faces) > 0:
+        processed_faces = self.process_images()
+        print(processed_faces)
+        if processed_faces:
+            boxes_faces = self.convert_rectangles2array(self.process_images(), self.frame)
             areas = self.get_areas(boxes_faces)
             boxes_faces = np.expand_dims(boxes_faces[0], axis=0)
             self.eye_blinker(self.process_images()[0], self.gray, self.counter, self.total)
             img_post = self.bounding_box(self.frame, boxes_faces, [self.last_detected])
             if img_post is not None and img_post.size != 0:
+                print("Guardando imagen")
+                cv2.imwrite("test_output.jpg", img_post)
                 return img_post
         else:
             img_post = self.frame
