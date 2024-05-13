@@ -12,7 +12,7 @@ lang: es
 
 Antes de elegir el modelo de yolo, se hizo una busqueda al respecto de cuales son los mejores modelos para la deteccion deimagenes, se realizaron comparaciones entre Yolo y VGG. Pero se concluyo que Yolo era mejor para el contexto necesario debido a que VGG es mucho mas pesado tanto eficientemente como en tiempo de ejecucion. Por otro lado se analizaron otras librerias de deep-learning como TensorFlwo y PyTorch, pero se concluyo que Yolo era la mejor opcion para el proyecto.
 
-### Yolo
+## Yolo
 
 Yolo es un modelo de deep-learning que tiene caracteristica sque lo destacan de los demas, como por ejemplo el ReLu, que permite que el modelo obtenga una mejor precision en la deteccion de objetos. Tiene dimensiones de entrada mas grandes, esto con el fin de poder pasar imagenes con mayor calidad, para que el algoritmo pueda detectarlas de mejor manera.
 
@@ -36,14 +36,39 @@ Una vez se eligió el modelo, se comenzó con el entrenamiento
 # Comando para comenzar el entrenamiento
 
 # imgsz = Image size of the input
-# batch = Indicates how many images are processed before the model's internal parameters are updated. \
-# weight_decay = Penalizing large weights to prevent overfitting.
+# batch = Indicates how many images are processed 
+#before the model's internal parameters are updated.
+# weight_decay = Penalizing large weights 
+#to prevent overfitting.
+
 model.train(data=dataset, epochs=100, imgsz=244, batch=16, weight_decay=0.0005)
 ```
-Luego se utilizó el ```model.val```, con el fin de que el modelo use un 10% de los datos para cambiar hiperparametros y mejorar el modelo.
 
-![Confusion Matrix obtenida del último entrenamiento del modelo](confusion-matrix.png)
+Luego se utilizó el `model.val`, con el fin de que el modelo use un 10% de los datos para cambiar hiperparametros y mejorar el modelo. Al final de el documento se encuentra la imagen de la confusion-matrix obtenida mediante la evaluación del modelo.
+
 
 ### Implementación
 
+Una vez se obtuvo el modelo entrenado, se comenzó a relizar un algoritmo capaz de detectar los rostros y luego pasar el ROI(Region of Intrest) hacia el modelo de Yolo para su analisis, en esta etapa hubo un problema y fue que se estba utilizando el modelo predeterminado sin entrenar de CV2, que es HaarCascade, pero se concluyó que no era el más apto debido a su credibilidad, ya que en la mayoría de ocaciones no detectaba los rostros de manera correcta. Por lo tanto se elegió el modelo de Yunet, debido a su alta credibilidad y eficiencia detectando rostros, en distintos contextos. Una vez se detecta el rostro y se envia su ROI a el algoritmo de yolo, el analiza la imagen y así da una estimación de la credibilidad de cada categoría, si es mayor a 0.75 se considera que es un rostro real, sino se considera que es un rostro falso.
 
+## Blink Detector
+
+Otra problematica a la que se enfrentan este tipo de algoritmos son las imagenes muy realistas o en muy buena calidad debido a que los algoritmos se les dificulta encontrar diferencias en este tipo de imagenes, por lo tanto acá es dónde se implementan este tipo de medidas, ya que el algoritmo de Blink Detection lo que hace es detectar si una persona parpadea o no, si no parpadea se descarta la imagen, si parpadea se considera que es un rostro real.
+
+Al ser como tal un procedimiento no se necesitaba un dataset. Se utilizó un modelo de dlib, llamado shape_predictor_68_face_landmarks, que es un modelo pre-entrenado que detecta todos los rasgos faciales y los puntos de los ojos, con el fin luego de hacer el analisis de los puntos de los ojos para ver si parpadea o no.
+
+## 3D Face Model
+
+Este modelo fue entrenado con distintas imagenes de rostros generados por computadora para el caso del Spoof y por rostros utilizados en el dataset del primer modelo para el caso del Live. Es uno de los modelos que mejor funciona gracias a su baja complejidad, ya que, este proceso de clasificacion es notoriamente mas sencillo que los procesos mencionados anteriormente.
+
+Por otro lado, como ya se menciono la baja complejidad del problema, se opto por un clasificador de yolo de menor nivel, se podria decir una version mas "Lite", esto para profundizar en la rapidez del modelo
+
+
+## Google Colab
+
+Por último se implementaron los 3 algoritmos en Google Colab, con el fin de que sea mucho más sencillo para las personas probar este tipo de algoritmos. Se recomienda usar los algoritmos localmente con el fin de tener más rendimiento y eficiencia a la hora de usarlos. _[Documento de Google Colab](https://colab.research.google.com/drive/1ufRKNJhmaa0ZVI4gXLm0Z2WZBgT4rRUj?usp=sharing)_
+
+
+![Confusion Matrix obtenida del algoritmo de Yolo para la Calidad de Imagen](confusion-matrix.png)
+
+![confusion Matrix del Algoritmo de 3D Face Model](confusion_matrix3D.png)
