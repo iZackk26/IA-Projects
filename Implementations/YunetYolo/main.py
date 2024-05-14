@@ -21,7 +21,7 @@ def yunet_yolo_face_detector():
     while True:
         ret, frame = cap.read()
         if frame is not None:
-            h,w = frame.shape
+            h,w, _= frame.shape
             model.setInputSize([w,h])
             faces = model.infer(frame)
             for det in (faces if faces is not None else []):
