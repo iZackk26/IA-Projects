@@ -3,7 +3,7 @@ from ultralytics import YOLO
 
 
 def get_probs(img):
-    model = YOLO("ImageQuality.pt")
+    model = YOLO("model/ImageQuality.pt")
     results = model(img, verbose=False)
     # return True
     return results[-1].probs.top1
