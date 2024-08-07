@@ -16,7 +16,7 @@ def live_face_detector():
         targetId=cv2.dnn.DNN_TARGET_CPU,
     )
 
-    cap = cv2.VideoCapture(0)
+    cap = cv2.VideoCapture(1)
     while True:
         ret, frame = cap.read()
         if frame is not None:
